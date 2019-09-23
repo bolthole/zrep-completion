@@ -1,0 +1,123 @@
+#
+# bash completion for:
+#
+# zrep 1.7.7
+# http://www.bolthole.com/solaris/zrep
+# http://www.github.com/bolthole/zrep
+#
+
+#
+# install by copy this file here /etc/bash_completion.d/zrep_completion
+#
+
+have zrep && {
+
+__contains() {
+	local cmd="$1"
+	local cmds="$2"
+	[[ $cmds =~ (^|[[:space:]])$cmd($|[[:space:]]) ]]
+}
+
+__zrep_list_datasets() {
+	zfs list -H -o name,zrep:dest-fs | sed -r '/-$/d;s/\t+.*//g'
+}
+
+__zrep_list_master_datasets() {
+	zfs list -H -o name,zrep:master | sed -r '/-$/d;s/\t+.*//g'
+}
+
+__zrep_list_master_snapshots() {
+	zfs list -H -t snapshot -o name,zrep:master | sed -r '/-$/d;s/\t+.*//g'
+}
+
+__zrep_list_sent_master_snapshots() {
+	zfs list -H -t snapshot -o name,zrep:master,zrep:sent | sed -r '/-$/d;/\t-\t/d;s/\t+.*//g'
+}
+
+__zrep_list_all_datasets() {
+	zfs list -H -o name
+}
+
+__zrep_list_hosts() {
+	if [ -e $HOME/.ssh/config ]; then
+		sed -nr 's/[hH]ost\s+(.*)/\1/p' $HOME/.ssh/config | sed 's/[*]//g'
+	fi
+}
+
+__zrep_opts() {
+	local cmd="$1"
+	case $cmd in
+		sync|-S) echo "-f -v -q all" ;;
+		status|-s) echo "-v -a" ;;
+		refresh) echo "-f -v" ;;
+		list|-l) echo "-L -v -s" ;;
+		expire|-e) echo "-L all" ;;
+		changeconfig|-C) echo "-f -d" ;;
+		failover|takeover) echo "-L" ;;
+		clear) echo "-f" ;;
+	esac
+}
+
+__zrep_complete() {
+	local cur prev cmd cmds
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	cmd="${COMP_WORDS[1]}"
+
+	opts="-a all -L -f -v -q -t"
+	cmds_no_fs="version"
+	cmds_master="refresh failover snaponly synconly"
+	cmds_master_sent="sync -S"
+	cmds_init="init -i changeconfig -C"
+	cmds_fs="status -s list -l expire -e takeover uptodate clear"
+	cmds_snap="sentsync" 
+	cmds="$cmds_no_fs $cmds_master $cmds_master_sent $cmds_init $cmds_fs $cmds_snap"
+
+	if __contains "$cmd" "$cmds_master"; then
+		COMPREPLY=($(compgen -W "$(__zrep_list_master_datasets) $(__zrep_opts $cmd)" -- "$cur"))
+		return 0
+	fi
+
+	if __contains "$cmd" "$cmds_master_sent"; then
+		COMPREPLY=($(compgen -W "$(__zrep_list_master_datasets) $(__zrep_list_sent_master_snapshots) $(__zrep_opts $cmd)" -- "$cur"))
+		return 0
+	fi
+
+	if __contains "$cmd" "$cmds_fs"; then
+		COMPREPLY=($(compgen -W "$(__zrep_list_datasets) $(__zrep_opts $cmd)" -- "$cur"))
+		return 0
+	fi
+
+	if __contains "$cmd" "$cmds_init"; then
+		case $COMP_CWORD in
+		2)
+			COMPREPLY=($(compgen -W "$(__zrep_list_all_datasets)" -- "$cur"))
+			return 0
+			;;
+		3)
+			COMPREPLY=($(compgen -W "$(__zrep_list_hosts)" -- "$cur"))
+			_known_hosts_real -a "$cur"
+			return 0
+			;;
+		4)
+			COMPREPLY=($(compgen -W "${COMP_WORDS[2]}" -- "$cur"))
+			return 0
+			;;
+		esac
+	fi
+
+	if __contains "$cmd" "$cmds_snap"; then
+		COMPREPLY=($(compgen -W "$(__zrep_list_master_snapshots)" -- "$cur"))
+		return 0
+	fi
+
+	if [ "${prev##*/}" = "zrep" ]; then
+		COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
+		return 0
+	fi
+}
+
+complete -F __zrep_complete zrep
+
+}
