@@ -19,8 +19,15 @@ Bash completion for ZREP, completes
 - hosts
 
 ## Installation
+Installation is simple. Just copy the Bash completion file into the Bash completion directory, which is `/etc/bash_completion.d` in many Linux distributions.
 
-To install Bash completion for ZREP; `cd` into the repository directory and type
+One way to achieve this is to download the file directly from GitHub.
+
+```bash
+sudo wget -O /etc/bash_completion.d/zrep https://raw.githubusercontent.com/mlan/zrep-completion/master/src/zrep
+```
+
+Alternatively you can clone this repository, `cd` into it and type:
 
 ```bash
 sudo make install
