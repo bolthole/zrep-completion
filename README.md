@@ -24,7 +24,7 @@ Installation is simple. Just copy the Bash completion file into the Bash complet
 One way to achieve this is to download the file directly from GitHub.
 
 ```bash
-sudo wget -O /etc/bash_completion.d/zrep https://raw.githubusercontent.com/mlan/zrep-completion/master/src/zrep
+sudo wget -O /etc/bash_completion.d/zrep https://raw.githubusercontent.com/bolthole/zrep-completion/master/src/zrep
 ```
 
 Alternatively you can clone this repository, `cd` into it and type:
