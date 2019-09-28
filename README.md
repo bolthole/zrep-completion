@@ -35,4 +35,6 @@ sudo make install
 
 Any new shell will have Bash completion for ZREP activated.
 
+## Acknowlegements
+
 Thanks is hereby given to Martin Lantz for contributing this code
