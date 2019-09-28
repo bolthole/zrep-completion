@@ -1,6 +1,6 @@
 # The `zrep-completion` repository
 
-This (non-official) repository provides [Bash](https://www.gnu.org/software/bash/) [completion](https://www.gnu.org/software/bash/manual/bash.html#Programmable-Completion) for [ZREP](http://www.bolthole.com/solaris/zrep/). Bash is the Bourne Again SHell.
+This repository provides [Bash](https://www.gnu.org/software/bash/) [completion](https://www.gnu.org/software/bash/manual/bash.html#Programmable-Completion) for [ZREP](http://www.bolthole.com/solaris/zrep/). Bash is the Bourne Again SHell.
 Bash is an sh-compatible shell that
 incorporates useful features from the Korn shell (ksh) and C shell
 (csh). Bash completion is a functionality through which Bash
