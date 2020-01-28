@@ -33,7 +33,7 @@ Alternatively you can clone this repository, `cd` into it and type:
 sudo make install
 ```
 
-Any new shell will have Bash completion for ZREP activated.
+Any new shell started after the install will have Bash completion for ZREP activated.
 
 ## Acknowlegements
 
